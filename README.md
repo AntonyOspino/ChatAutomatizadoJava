@@ -73,4 +73,6 @@ src/main/
 └── resources/
     └── imagenes/
         └── tu_logo.png          # Logo de la aplicación
+
+        
 Desarrollado por Antony Ospino.
