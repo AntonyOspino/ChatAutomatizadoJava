@@ -18,7 +18,7 @@ Aplicación de escritorio interactiva construida en **Java (Swing)** que actúa 
 
 ## 🛠️ Tecnologías y Dependencias
 
-El proyecto utiliza **Maven** como gestor de dependencias. Las librerías principales configuradas en el `pom.xml` son:
+El proyecto utiliza **Maven** como gestor de dependencias. Las libristemas principales configuradas en el `pom.xml` son:
 
 * **[FlatLaf (3.2.1)](https://www.formdev.com/flatlaf/):** Look and Feel moderno para modernizar los componentes Swing tradicionales.
 * **[OkHttp3 (4.11.0)](https://square.github.io/okhttp/):** Cliente HTTP eficiente para realizar las peticiones POST y GET a la API REST.
@@ -36,3 +36,41 @@ El proyecto utiliza **Maven** como gestor de dependencias. Las librerías princi
    ```bash
    git clone [https://github.com/AntonyOspino/ChatAutomatizadoJava.git](https://github.com/AntonyOspino/ChatAutomatizadoJava.git)
    cd ChatAutomatizadoJava
+Compilar el proyecto con Maven:
+
+Bash
+mvn clean install
+Ejecutar la aplicación:
+Puede ejecutarse directamente desde el IDE (NetBeans, IntelliJ, Eclipse) lanzando la clase principal ChatAutomatizado.java, o mediante el archivo .jar generado en la carpeta target/.
+
+🔄 Flujo de la Máquina de Estados
+El comportamiento del chat está diseñado para consumir los endpoints de la API en un orden estricto:
+
+PEDIR_NOMBRE ➔ Registra al usuario (POST /sesiones/crear).
+
+PREGUNTAR_ANALISIS ➔ Valida si el usuario desea continuar.
+
+PREGUNTAR_TIPO_ARCHIVO ➔ Define si se procesará un CSV o XLSX.
+
+PEDIR_URL_DATA ➔ Envía la URL de los datos (POST /datos/cargar) y obtiene las columnas detectadas (GET /datos/columnas).
+
+PEDIR_COLUMNAS_CUANTITATIVAS ➔ Captura la selección numérica.
+
+PEDIR_COLUMNAS_CUALITATIVAS ➔ Captura la selección categórica y dispara el análisis pesado (POST /analisis/ejecutar y POST /pdf/generar).
+
+PEDIR_CORREO ➔ Solicita el email para el envío del informe final (POST /correo/enviar).
+
+FINALIZADO ➔ Cierra la sesión y la aplicación exitosamente.
+
+📂 Estructura del Código
+Plaintext
+src/main/
+├── java/com/mycompany/chatautomatizado/
+│   ├── ChatAutomatizado.java    # Punto de entrada y setup de FlatLaf
+│   ├── VentanaChat.java         # Interfaz gráfica principal y lógica de OkHttp
+│   ├── EstadoChat.java          # Enum con los estados de la máquina
+│   └── SplashScreen.java        # Pantalla de carga inicial (JWindow)
+└── resources/
+    └── imagenes/
+        └── tu_logo.png          # Logo de la aplicación
+Desarrollado por Antony Ospino.
