@@ -13,7 +13,8 @@ import java.io.IOException;
  */
 
 public class VentanaChat extends JFrame {
-    private JTextArea areaMensajes;
+    private JPanel panelMensajes;
+    private JScrollPane scrollPane;
     private JTextField campoTexto;
     private JButton btnEnviar;
     private EstadoChat estadoActual = EstadoChat.PEDIR_NOMBRE;
@@ -38,28 +39,70 @@ public class VentanaChat extends JFrame {
         // Configuración de la ventana
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
         setTitle("Asistente de Análisis de Datos");
+        // Cambiar el ícono de la ventana por tu propio logo
+        setIconImage(new ImageIcon(getClass().getResource("/imagenes/tu_logo.png")).getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Configurar los componentes
-        areaMensajes = new JTextArea();
-        areaMensajes.setEditable(false);
-        areaMensajes.setLineWrap(true);
-        areaMensajes.setWrapStyleWord(true);
-        areaMensajes.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
-        areaMensajes.setMargin(new Insets(10, 10, 10, 10)); // Márgenes internos
+        // Configurar el contenedor de mensajes (Fondo tipo WhatsApp)
+        panelMensajes = new JPanel();
+        panelMensajes.setLayout(new BoxLayout(panelMensajes, BoxLayout.Y_AXIS));
+        panelMensajes.setBackground(new Color(229, 221, 213)); // Fondo crema
+
+        // 🌟 LA MAGIA PARA QUITAR EL ESPACIO: Un panel envoltorio que empuja arriba
+        JPanel wrapperPanel = new JPanel(new BorderLayout());
+        wrapperPanel.setBackground(new Color(229, 221, 213));
+        wrapperPanel.add(panelMensajes, BorderLayout.NORTH); 
+
+        // Metemos el envoltorio al scroll en vez del panel directamente
+        scrollPane = new JScrollPane(wrapperPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Scroll más suave
         
+        /*campoTexto = new JTextField();
+        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 16));*/
+        
+        // --- 1. CAJA DE TEXTO ESTILO PÍLDORA (CORREGIDA) ---
         campoTexto = new JTextField();
-        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        
+        // SOLUCIÓN AL TEXTO CORTADO: Le damos una altura fija de 45 píxeles para que respire
+        campoTexto.setPreferredSize(new Dimension(0, 45)); 
+        
+        // SOLUCIÓN AL BORDE AZUL: Apagamos todos los brillos de enfoque nativos de FlatLaf
+        campoTexto.putClientProperty("FlatLaf.style", "focusWidth: 0; innerFocusWidth: 0; focusedBorderColor: #cccccc; borderColor: #cccccc");
+        
+        // Textos y bordes curvos
+        campoTexto.putClientProperty("JTextField.placeholderText", "Escribe un mensaje aquí..."); 
+        campoTexto.putClientProperty("JComponent.roundRect", true); 
+        
+        // Ajustamos el margen interno (menos arriba y abajo, más a los lados) para centrar la letra
+        campoTexto.putClientProperty("JTextField.padding", new Insets(2, 15, 2, 15));
+        
         btnEnviar = new JButton("Enviar");
-        btnEnviar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnEnviar.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnEnviar.setBackground(new Color(0, 168, 132)); // Verde característico de WhatsApp
+        btnEnviar.setForeground(Color.WHITE); // Texto en color blanco
+        btnEnviar.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cursor de manito al pasar el mouse
+        btnEnviar.setFocusPainted(false); // Quita el contorno punteado al hacerle clic
+        btnEnviar.putClientProperty("JButton.buttonType", "roundRect"); // Activa los bordes curvos de FlatLaf
         
         // Acomodar todo en la pantalla
-        JPanel panelInferior = new JPanel(new BorderLayout(10, 10));
+        /*JPanel panelInferior = new JPanel(new BorderLayout(10, 10));
         panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelInferior.add(campoTexto, BorderLayout.CENTER);
+        panelInferior.add(btnEnviar, BorderLayout.EAST);*/
+        
+        // --- 3. PANEL INFERIOR (Estilo barra de WhatsApp) ---
+        JPanel panelInferior = new JPanel(new BorderLayout(15, 10)); // Un poquito más de separación entre la caja y el botón
+        // Magia 4: Color gris claro típico de la barra de escribir de WhatsApp
+        panelInferior.setBackground(new Color(240, 242, 245)); 
+        // Márgenes más amplios para que respire el diseño
+        panelInferior.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20)); 
+        
         panelInferior.add(campoTexto, BorderLayout.CENTER);
         panelInferior.add(btnEnviar, BorderLayout.EAST);
         
-        add(new JScrollPane(areaMensajes), BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
         // Darle vida al botón y al Enter
@@ -68,15 +111,95 @@ public class VentanaChat extends JFrame {
 
         // Iniciar el chat
         agregarMensajeAsistente("¡Hola! ¿Cómo estás? ¿Cómo te llamas?");
+        
+        // Evento para que el cursor aparezca automáticamente en la caja de texto al abrir
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent e) {
+                campoTexto.requestFocusInWindow();
+            }
+        });
     }
 
+    private void agregarMensaje(String texto, boolean esUsuario) {
+        // 1. Crear la fila y alinearla (Derecha para usuario, Izquierda para asistente)
+        JPanel panelFila = new JPanel(new FlowLayout(esUsuario ? FlowLayout.RIGHT : FlowLayout.LEFT));
+        panelFila.setBackground(new Color(229, 221, 213));
+
+        // 2. Configurar el texto del mensaje
+        JTextArea areaTexto = new JTextArea(texto);
+        areaTexto.setEditable(false);
+        areaTexto.setLineWrap(true);
+        areaTexto.setWrapStyleWord(true);
+        areaTexto.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
+        areaTexto.setOpaque(false); // Transparente
+        
+        // Limitar el ancho del texto
+        int columnas = Math.min(texto.length(), 40); 
+        areaTexto.setColumns(columnas < 10 ? 10 : columnas);
+
+        // 3. 🌟 LA BURBUJA CON SOMBRA Y BORDES REDONDEADOS
+        JPanel burbuja = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                // Activar el suavizado (antialiasing) para que no se vean pixeleados los bordes
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int radio = 20;
+                int sombra = 3; // Píxeles que ocupará la sombra
+
+                // Capa 1 de sombra: más difuminada y desplazada
+                g2.setColor(new Color(0, 0, 0, 15)); 
+                g2.fillRoundRect(2, 2, getWidth() - sombra, getHeight() - sombra, radio, radio);
+                
+                // Capa 2 de sombra: un poco más oscura y centrada
+                g2.setColor(new Color(0, 0, 0, 25)); 
+                g2.fillRoundRect(1, 1, getWidth() - sombra, getHeight() - sombra, radio, radio);
+
+                // Dibujar la burbuja principal de color encima
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth() - sombra, getHeight() - sombra, radio, radio);
+
+                g2.dispose();
+            }
+        };
+        burbuja.setOpaque(false); // Vital para que la sombra se mezcle con el fondo crema
+        burbuja.setBackground(esUsuario ? new Color(220, 248, 198) : Color.WHITE);
+        
+        // Aumentamos 3 píxeles el margen derecho y abajo para que el texto no se monte en la sombra
+        burbuja.setBorder(BorderFactory.createEmptyBorder(10, 15, 13, 18));
+
+        // 4. 🌟 CORRECCIÓN EMOJIS: Etiqueta del autor con fuente compatible
+        JLabel lblAutor = new JLabel(esUsuario ? "👤 Tú" : "🤖 Asistente");
+        lblAutor.setFont(new Font("Segoe UI Emoji", Font.BOLD, 12)); // ¡Aquí estaba el detalle!
+        lblAutor.setForeground(new Color(150, 150, 150));
+        lblAutor.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+
+        // Ensamblar todo
+        burbuja.add(lblAutor, BorderLayout.NORTH);
+        burbuja.add(areaTexto, BorderLayout.CENTER);
+        panelFila.add(burbuja);
+        panelMensajes.add(panelFila);
+        
+        // Refrescar la pantalla
+        panelMensajes.revalidate();
+        panelMensajes.repaint();
+
+        // Bajar el scroll automáticamente
+        SwingUtilities.invokeLater(() -> {
+            JScrollBar vertical = scrollPane.getVerticalScrollBar();
+            vertical.setValue(vertical.getMaximum());
+        });
+    }
+
+    // Estos métodos llaman a nuestra nueva función general
     private void agregarMensajeAsistente(String mensaje) {
-    areaMensajes.append("🤖 Asistente: " + mensaje + "\n\n");
-    areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
+        agregarMensaje(mensaje, false);
     }
 
     private void agregarMensajeUsuario(String mensaje) {
-        areaMensajes.append("👤 Tú: " + mensaje + "\n\n");
+        agregarMensaje(mensaje, true);
     }
 
     private void procesarMensaje(ActionEvent e) {

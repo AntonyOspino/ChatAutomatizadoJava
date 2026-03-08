@@ -1,10 +1,12 @@
 com\mycompany\chatautomatizado\ChatAutomatizado.class
 com\mycompany\chatautomatizado\VentanaChat$1.class
+com\mycompany\chatautomatizado\VentanaChat$8.class
 com\mycompany\chatautomatizado\VentanaChat$2.class
-com\mycompany\chatautomatizado\VentanaChat$4.class
-com\mycompany\chatautomatizado\VentanaChat$3.class
 com\mycompany\chatautomatizado\VentanaChat$6.class
 com\mycompany\chatautomatizado\EstadoChat.class
-com\mycompany\chatautomatizado\VentanaChat.class
-com\mycompany\chatautomatizado\SplashScreen.class
 com\mycompany\chatautomatizado\VentanaChat$5.class
+com\mycompany\chatautomatizado\VentanaChat$4.class
+com\mycompany\chatautomatizado\VentanaChat$3.class
+com\mycompany\chatautomatizado\VentanaChat.class
+com\mycompany\chatautomatizado\VentanaChat$7.class
+com\mycompany\chatautomatizado\SplashScreen.class
