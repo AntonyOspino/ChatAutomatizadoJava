@@ -26,27 +26,6 @@ public class SplashScreen extends JWindow{
         pack();
         setLocationRelativeTo(null); // Centrar en la pantalla
     }
-    /*public SplashScreen() {
-        // Texto temporal en lugar de imagen
-        JLabel labelLogo = new JLabel("Cargando Asistente...", SwingConstants.CENTER);
-        labelLogo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        
-        add(labelLogo, BorderLayout.CENTER);
-        
-        // Hacer la ventana de carga un poco más grande para el texto
-        setPreferredSize(new Dimension(400, 300));
-        pack();
-        setLocationRelativeTo(null); // Centrar en la pantalla
-    }*/
-    /*public SplashScreen() {
-        // Aquí pones la ruta de tu logo
-        ImageIcon logo = new ImageIcon(getClass().getResource("/imagenes/tu_logo.webp")); 
-        JLabel labelLogo = new JLabel(logo);
-        add(labelLogo, BorderLayout.CENTER);
-        
-        pack();
-        setLocationRelativeTo(null); // Centrar en la pantalla
-    }*/
     
     public void mostrarYContinuar(Runnable onTerminar) {
         setVisible(true);
