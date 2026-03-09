@@ -325,7 +325,7 @@ public class VentanaChat extends JFrame {
                 try {
                     boolean exito = get();
                     if (exito) {
-                        agregarMensajeAsistente("¡Sesión iniciada con éxito! (ID: " + sesionId + ")\n¿Deseas realizar un análisis exploratorio de datos? Si o no");
+                        agregarMensajeAsistente("¡Sesión iniciada con éxito!\n¿Deseas realizar un análisis exploratorio de datos? Si o no");
                         estadoActual = EstadoChat.PREGUNTAR_ANALISIS;
                     } else {
                         agregarMensajeAsistente("Hubo un error al conectar con el servidor de Python. Asegúrate de que esté encendido.");
